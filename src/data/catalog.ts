@@ -6,16 +6,24 @@ import {
   RarityGroup,
   SeriesId,
 } from '../types/card';
+import heroMiliImg from '../assets/images/hero_mili_portrait_1795132808117.jpg';
+import heroCangyuanImg from '../assets/images/hero_cangyuan_portrait_1795132807324.jpg';
+import heroXiyinImg from '../assets/images/hero_xiyin_portrait_1795132806049.jpg';
+import heroJinyuImg from '../assets/images/hero_jinyu_portrait_1795132807161.jpg';
+import relationMiliCangyuanImg from '../assets/images/relation_mili_cangyuan_chr_1795132806812.jpg';
+import sceneStardustImg from '../assets/images/scene_stardust_rooftop_1795132806951.jpg';
+import sceneDeepseaImg from '../assets/images/scene_deepsea_library_1795132807743.jpg';
+import sceneWastelandImg from '../assets/images/scene_wasteland_station_1795132807537.jpg';
 
 export const ART_ASSETS = {
-  mili: '/src/assets/images/hero_mili_portrait_1795132808117.jpg',
-  cangyuan: '/src/assets/images/hero_cangyuan_portrait_1795132807324.jpg',
-  xiyin: '/src/assets/images/hero_xiyin_portrait_1795132806049.jpg',
-  jinyu: '/src/assets/images/hero_jinyu_portrait_1795132807161.jpg',
-  relationMiliCangyuan: '/src/assets/images/relation_mili_cangyuan_chr_1795132806812.jpg',
-  sceneStardust: '/src/assets/images/scene_stardust_rooftop_1795132806951.jpg',
-  sceneDeepsea: '/src/assets/images/scene_deepsea_library_1795132807743.jpg',
-  sceneWasteland: '/src/assets/images/scene_wasteland_station_1795132807537.jpg',
+  mili: heroMiliImg,
+  cangyuan: heroCangyuanImg,
+  xiyin: heroXiyinImg,
+  jinyu: heroJinyuImg,
+  relationMiliCangyuan: relationMiliCangyuanImg,
+  sceneStardust: sceneStardustImg,
+  sceneDeepsea: sceneDeepseaImg,
+  sceneWasteland: sceneWastelandImg,
 } as const;
 
 export const CARD_TYPE_META: Record<
