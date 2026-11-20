@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Check, Code2, Copy, Layers, X } from 'lucide-react';
 import { CARD_TYPE_META, HERO_REGISTRY, RARITY_META } from '../data/catalog';
 import { NarrativeCard } from '../types/card';
+import { copyToClipboard } from '../utils/promptBuilder';
 import { CardVisual } from './CardVisual';
 
 interface CardDetailModalProps {
@@ -54,7 +55,7 @@ export const CardDetailModal: React.FC<CardDetailModalProps> = ({
   );
 
   const handleCopyJson = () => {
-    navigator.clipboard.writeText(cleanJson).catch(() => {});
+    void copyToClipboard(cleanJson);
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };

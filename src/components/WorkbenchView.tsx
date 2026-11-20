@@ -24,6 +24,7 @@ import {
 import {
   buildNarrativePromptPack,
   buildVisualPromptPack,
+  copyToClipboard,
   validateAssembly,
 } from '../utils/promptBuilder';
 import { CardVisual } from './CardVisual';
@@ -115,7 +116,7 @@ export const WorkbenchView: React.FC<WorkbenchViewProps> = ({
   const activeScene = assembly.sceneCardId ? cardMap.get(assembly.sceneCardId) : undefined;
 
   const copyText = (key: string, text: string) => {
-    navigator.clipboard.writeText(text).catch(() => {});
+    void copyToClipboard(text);
     setCopiedKey(key);
     setTimeout(() => setCopiedKey(null), 1800);
   };

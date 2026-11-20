@@ -14,7 +14,11 @@ import {
 } from 'lucide-react';
 import { CARD_TYPE_META, HERO_REGISTRY } from '../data/catalog';
 import { NarrativeCard, StorySnapshot } from '../types/card';
-import { buildObsidianVaultMarkdown, downloadTextFile } from '../utils/promptBuilder';
+import {
+  buildObsidianVaultMarkdown,
+  copyToClipboard,
+  downloadTextFile,
+} from '../utils/promptBuilder';
 
 interface SnapshotsExportViewProps {
   catalog: NarrativeCard[];
@@ -267,7 +271,7 @@ export const SnapshotsExportView: React.FC<SnapshotsExportViewProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      navigator.clipboard.writeText(activeNote.content).catch(() => {});
+                      void copyToClipboard(activeNote.content);
                       setCopiedObsidian(true);
                       setTimeout(() => setCopiedObsidian(false), 1800);
                     }}
@@ -319,7 +323,13 @@ export const SnapshotsExportView: React.FC<SnapshotsExportViewProps> = ({
               type="button"
               onClick={() => {
                 setShowPrintPreview(true);
-                setTimeout(() => window.print(), 120);
+                setTimeout(() => {
+                  try {
+                    window.print();
+                  } catch {
+                    // Fallback: preview remains open for manual export
+                  }
+                }, 120);
               }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D8B467] text-[#111318] text-xs font-semibold hover:bg-[#E9CF90] whitespace-nowrap"
             >
