@@ -1,0 +1,6 @@
+{
+  "name": "织界卡匣 · 叙事积木盲盒工作台",
+  "description": "面向虚拟IP创作者的叙事积木抽卡与拼装工作台：收集结构化角色、服饰、动作、场景、剧情与关系卡牌，自由编组并一键导出视觉与叙事双轨 Prompt 包。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
