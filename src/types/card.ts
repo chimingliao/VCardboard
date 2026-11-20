@@ -1,143 +1,91 @@
 export type CardType =
-  | 'hero'
-  | 'photo'
-  | 'outfit'
-  | 'item'
-  | 'motion'
+  | 'character'
+  | 'costume'
+  | 'hairstyle'
+  | 'makeup'
+  | 'pose'
   | 'scene'
-  | 'story'
-  | 'relation'
-  | 'voice'
-  | 'bgm';
+  | 'prop'
+  | 'effect';
 
-export type Rarity =
-  | 'C'
-  | 'U'
-  | 'R'
-  | 'RR'
-  | 'AR'
-  | 'SR'
-  | 'SAR'
-  | 'UR'
-  | 'CHR'
-  | 'CSR';
+export type Rarity = 'N' | 'R' | 'SR' | 'SSR' | 'UR';
 
-export type RarityGroup = 'base' | 'chase';
+export type ThemePackId =
+  | 'daily'
+  | 'school'
+  | 'travel'
+  | 'cyber'
+  | 'gothic'
+  | 'occupation';
 
-export type SeriesId =
-  | 'stardust_prelude'
-  | 'deepsea_echo'
-  | 'wasteland_era'
-  | 'bond_resonance';
+export type EffectVisualKind =
+  | 'butterfly'
+  | 'golden_bokeh'
+  | 'film_grain'
+  | 'gothic_rays'
+  | 'cyber_rim'
+  | 'sakura_mist';
 
-export interface CardContent {
-  summary: string;
-  profile?: string;
-  appearance?: string;
-  traits?: string[];
-  catchphrase?: string;
-  weakness?: string;
-  outfit_detail?: string;
-  item_note?: string;
-  pose_camera?: string;
-  scene_atmosphere?: string;
-  dialogue_or_excerpt?: string;
-  relation_type?: string;
-  tension_note?: string;
-  audio_cue?: string;
-}
-
-export interface PromptHint {
-  visual: string;
-  tone: string;
-}
-
-export interface NarrativeCard {
+export interface StyleCard {
   card_id: string;
   card_type: CardType;
   rarity: Rarity;
   name: string;
-  subtitle?: string;
-  series: string;
-  series_id: SeriesId;
-  world_tags: string[];
-  /** Bound Hero IDs. Empty array = global resource (scene, universal item, etc.) */
-  bind_hero: string[];
-  /** Only for relation cards: required Hero IDs */
-  relation_targets: string[];
-  /** Only for motion cards: required number of Heroes (1 = solo, 2 = duo, 3+ = ensemble) */
-  motion_seats?: number;
-  /** Only for story cards: recurring fragment vs chronicle node */
-  story_kind?: 'recurring' | 'node';
-  /** Chronological order for story node fragments */
-  timeline_order?: number;
-  /** Milestone label e.g. 序章 / 相遇 / 转折 / 告别 */
-  node_phase?: string;
-  content: CardContent;
-  assets: string[];
+  en_name: string;
+  theme_id: ThemePackId;
+  theme_name: string;
+  style_tags: string[];
+  description: string;
+  detail_note?: string;
   artwork_url?: string;
   artwork_focal?: string;
-  /** Visual accent color strictly for subtle card print trim / diagram line */
-  accent_hex?: string;
-  prompt_hint: PromptHint;
-  /** Whether this card is unlocked by completing a series milestone rather than random draw */
-  hidden_unlock?: boolean;
-  /** Custom user-authored card flag */
+  accent_hex: string;
+  effect_kind?: EffectVisualKind;
+  prompt_hint: {
+    visual: string;
+    tone: string;
+  };
   is_custom?: boolean;
   acquired_at?: string;
 }
 
-export type PackPoolKind = 'hero_pool' | 'accessory_pool' | 'bond_special';
-
-export interface BoosterPackDef {
-  pack_id: string;
-  series_id: SeriesId;
-  series_name: string;
+export interface ThemePackDef {
+  pack_id: ThemePackId;
+  code: string;
   title: string;
-  subtitle: string;
-  pool_kind: PackPoolKind;
-  world_tags: string[];
-  cover_art: string;
-  foil_accent: string;
+  en_title: string;
+  tagline: string;
   description: string;
-  guaranteed_note: string;
-  milestone_threshold: number;
-  hidden_reward_card_id?: string;
+  cover_art: string;
+  foil_from: string;
+  foil_to: string;
+  foil_edge: string;
+  featured_tags: string[];
 }
 
-export interface HeroSlotLoadout {
-  heroId: string;
-  outfitCardId: string | null;
-  itemCardIds: string[];
-  photoCardId: string | null;
-  voiceCardId: string | null;
-}
+export type OutputMedium = 'photography' | 'illustration' | 'animation';
 
-export interface ScriptBlock {
-  id: string;
-  kind: 'card' | 'narration';
-  cardId?: string;
-  text?: string;
-}
-
-export interface WorkbenchAssembly {
+export interface CombineRecipe {
   title: string;
-  heroLoadouts: HeroSlotLoadout[];
-  motionCardId: string | null;
-  relationCardId: string | null;
-  sceneCardId: string | null;
-  bgmCardId: string | null;
-  scriptBlocks: ScriptBlock[];
-  narrativeFormat: 'chapter' | 'storyboard' | 'social';
+  characterId: string | null;
+  costumeId: string | null;
+  hairstyleId: string | null;
+  makeupId: string | null;
+  poseId: string | null;
+  sceneId: string | null;
+  propId: string | null;
+  effectId: string | null;
+  medium: OutputMedium;
+  customNote: string;
 }
 
-export interface StorySnapshot {
+export interface SavedCreation {
   id: string;
   title: string;
-  chapter_label: string;
-  note: string;
-  saved_at: string;
-  assembly: WorkbenchAssembly;
+  created_at: string;
+  recipe: CombineRecipe;
+  preview_url: string;
+  summary_line: string;
 }
 
-export type AppSection = 'shelf' | 'workbench' | 'atlas' | 'snapshots';
+export type AppSection = 'packs' | 'combine' | 'library' | 'creations';

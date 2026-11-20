@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Check, Code2, Copy, Layers, X } from 'lucide-react';
-import { CARD_TYPE_META, HERO_REGISTRY, RARITY_META } from '../data/catalog';
-import { NarrativeCard } from '../types/card';
+import { CARD_TYPE_META, RARITY_META } from '../data/catalog';
+import { StyleCard } from '../types/card';
 import { copyToClipboard } from '../utils/promptBuilder';
 import { CardVisual } from './CardVisual';
 
 interface CardDetailModalProps {
-  card: NarrativeCard | null;
+  card: StyleCard | null;
   owned: boolean;
   onClose: () => void;
-  onMountToWorkbench: (card: NarrativeCard) => void;
+  onEquipToCombine: (card: StyleCard) => void;
 }
 
 export const CardDetailModal: React.FC<CardDetailModalProps> = ({
   card,
   owned,
   onClose,
-  onMountToWorkbench,
+  onEquipToCombine,
 }) => {
   const [showJson, setShowJson] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -32,8 +32,8 @@ export const CardDetailModal: React.FC<CardDetailModalProps> = ({
 
   if (!card) return null;
 
-  const rarityInfo = RARITY_META[card.rarity];
   const typeInfo = CARD_TYPE_META[card.card_type];
+  const rarityInfo = RARITY_META[card.rarity];
 
   const cleanJson = JSON.stringify(
     {
@@ -41,14 +41,11 @@ export const CardDetailModal: React.FC<CardDetailModalProps> = ({
       card_type: card.card_type,
       rarity: card.rarity,
       name: card.name,
-      series: card.series,
-      world_tags: card.world_tags,
-      bind_hero: card.bind_hero,
-      relation_targets: card.relation_targets,
-      content: card.content,
-      assets: card.assets,
+      en_name: card.en_name,
+      theme: card.theme_name,
+      style_tags: card.style_tags,
+      description: card.description,
       prompt_hint: card.prompt_hint,
-      acquired_at: card.acquired_at ?? '未入库',
     },
     null,
     2
@@ -69,27 +66,26 @@ export const CardDetailModal: React.FC<CardDetailModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 md:p-8"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/82 backdrop-blur-sm p-4 md:p-8"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#13161F] border border-white/10 p-6 md:p-8"
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#12141D] border border-white/12 p-6 md:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
-          aria-label="关闭卡牌详情"
-          className="absolute top-5 right-5 w-10 h-10 rounded-lg flex items-center justify-center text-[#9A9892] hover:text-[#ECE9E1] hover:bg-white/5 transition-colors"
+          aria-label="关闭素材详情"
+          className="absolute top-5 right-5 w-10 h-10 rounded-lg flex items-center justify-center text-[#9E9BA3] hover:text-[#F1EEE8] hover:bg-white/6 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-          {/* Left: Interactive 3D-tilt Collectible Card */}
           <div className="md:col-span-5 flex flex-col items-center">
             <div
-              className="w-full max-w-[300px] card-perspective"
+              className="w-full max-w-[290px] card-perspective"
               onPointerMove={handlePointerMove}
               onPointerLeave={() => setTilt({ x: 0, y: 0 })}
             >
@@ -102,109 +98,69 @@ export const CardDetailModal: React.FC<CardDetailModalProps> = ({
                 <CardVisual card={card} size="lg" owned={owned} />
               </div>
             </div>
-            <div className="mt-4 text-center text-xs text-[#9A9892]">
-              <span>{rarityInfo.name}</span>
+            <div className="mt-4 text-center text-xs text-[#9E9BA3]">
+              <span>{card.rarity} · {rarityInfo.cn}</span>
               <span className="mx-1.5" aria-hidden="true">·</span>
               <span>{rarityInfo.spec}</span>
             </div>
           </div>
 
-          {/* Right: Structured Content + Prompt Hint + JSON */}
-          <div className="md:col-span-7 flex flex-col gap-6">
+          <div className="md:col-span-7 flex flex-col gap-5">
             <div>
-              <div className="text-xs text-[#D8B467]">
-                {typeInfo.label} · {card.series} · 规格 {card.rarity}（{rarityInfo.cnName}）
+              <div className="text-xs text-[#E2BD75]">
+                {typeInfo.label}（{typeInfo.en}） · {card.theme_name}主题包
               </div>
-              <h2 className="mt-1.5 font-editorial text-2xl md:text-3xl font-semibold text-[#FAF8F2]">
+              <h2 className="mt-1.5 font-editorial text-2xl md:text-3xl font-semibold text-[#FFFDF8]">
                 {card.name}
               </h2>
-              {card.subtitle && (
-                <p className="mt-1 text-sm text-[#9A9892]">{card.subtitle}</p>
-              )}
-              <div className="mt-3 text-xs text-[#9A9892] flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span>世界观标签：{card.world_tags.join(' / ')}</span>
-                <span aria-hidden="true">·</span>
-                <span>
-                  绑定主体：
-                  {card.bind_hero.length > 0
-                    ? card.bind_hero.map((id) => HERO_REGISTRY[id]?.name ?? id).join('、')
-                    : '全局可用'}
-                </span>
+              <div className="mt-1 text-xs font-mono-data text-[#9E9BA3]">{card.en_name}</div>
+              <div className="mt-3 text-xs text-[#C6C2BA]">
+                风格标签：{card.style_tags.join(' · ')}
               </div>
             </div>
 
-            <div className="border-t border-white/8 pt-5 space-y-4">
+            <div className="border-t border-white/8 pt-4 space-y-4">
               <div>
-                <div className="text-xs font-medium text-[#9A9892] mb-1.5">
-                  设定正文（给人阅读与故事创作）
-                </div>
-                <p className="text-sm leading-relaxed text-[#ECE9E1]">{card.content.summary}</p>
-                {card.content.profile && (
-                  <p className="mt-2 text-sm leading-relaxed text-[#C6C2B8]">{card.content.profile}</p>
-                )}
-                {card.content.appearance && (
-                  <p className="mt-2 text-xs text-[#C6C2B8]">外貌特征：{card.content.appearance}</p>
-                )}
-                {card.content.outfit_detail && (
-                  <p className="mt-2 text-xs text-[#C6C2B8]">细节工艺：{card.content.outfit_detail}</p>
-                )}
-                {card.content.item_note && (
-                  <p className="mt-2 text-xs text-[#C6C2B8]">物件注记：{card.content.item_note}</p>
-                )}
-                {card.content.pose_camera && (
-                  <p className="mt-2 text-xs text-[#C6C2B8]">镜头与构图：{card.content.pose_camera}</p>
-                )}
-                {card.content.scene_atmosphere && (
-                  <p className="mt-2 text-xs text-[#C6C2B8]">环境氛围：{card.content.scene_atmosphere}</p>
-                )}
-                {card.content.tension_note && (
-                  <p className="mt-2 text-xs text-[#D8B467]/90">羁绊张力：{card.content.tension_note}</p>
-                )}
-                {card.content.dialogue_or_excerpt && (
-                  <blockquote className="mt-3 p-3.5 rounded-lg bg-[#1A1E29] border border-white/8 text-sm italic text-[#E9DFC9]">
-                    {card.content.dialogue_or_excerpt}
-                  </blockquote>
-                )}
-                {card.content.catchphrase && (
-                  <p className="mt-2 text-xs text-[#E9CF90]">口头禅：{card.content.catchphrase}</p>
+                <div className="text-xs font-medium text-[#9E9BA3] mb-1.5">素材说明</div>
+                <p className="text-sm leading-relaxed text-[#F1EEE8]">{card.description}</p>
+                {card.detail_note && (
+                  <p className="mt-2 text-xs leading-relaxed text-[#E2BD75]/90">
+                    搭配建议：{card.detail_note}
+                  </p>
                 )}
               </div>
 
               <div className="border-t border-white/8 pt-4">
-                <div className="text-xs font-medium text-[#9A9892] mb-2">
-                  结构化提示词容器（Prompt Hint · 供工作台自动拼装）
+                <div className="text-xs font-medium text-[#9E9BA3] mb-2">
+                  结构化提示词容器（自动融入组合生成）
                 </div>
                 <div className="space-y-2 text-xs font-mono-data">
-                  <div className="p-3 rounded-lg bg-[#0D0F14] border border-white/8">
-                    <div className="text-[11px] text-[#9A9892] mb-1">visual</div>
-                    <div className="text-[#ECE9E1] leading-relaxed">{card.prompt_hint.visual}</div>
+                  <div className="p-3 rounded-lg bg-[#0B0C11] border border-white/8">
+                    <div className="text-[11px] text-[#9E9BA3] mb-1">visual prompt</div>
+                    <div className="text-[#F1EEE8] leading-relaxed">{card.prompt_hint.visual}</div>
                   </div>
-                  <div className="p-3 rounded-lg bg-[#0D0F14] border border-white/8">
-                    <div className="text-[11px] text-[#9A9892] mb-1">tone</div>
-                    <div className="text-[#D8B467] leading-relaxed">{card.prompt_hint.tone}</div>
+                  <div className="p-3 rounded-lg bg-[#0B0C11] border border-white/8">
+                    <div className="text-[11px] text-[#9E9BA3] mb-1">atmosphere / tone</div>
+                    <div className="text-[#E2BD75] leading-relaxed">{card.prompt_hint.tone}</div>
                   </div>
                 </div>
-              </div>
-
-              <div className="border-t border-white/8 pt-4 text-xs text-[#9A9892]">
-                挂载规则：{typeInfo.mountRule}
               </div>
             </div>
 
             {showJson && (
-              <div className="rounded-lg bg-[#0B0D12] border border-white/10 p-3.5">
+              <div className="rounded-lg bg-[#090A0F] border border-white/10 p-3.5">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-mono-data text-[#9A9892]">底层 JSON 条目</span>
+                  <span className="text-[11px] font-mono-data text-[#9E9BA3]">素材 JSON 数据</span>
                   <button
                     type="button"
                     onClick={handleCopyJson}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#D8B467] hover:text-[#E9CF90] whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#E2BD75] hover:text-[#F3D99F] whitespace-nowrap"
                   >
                     {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     {copied ? '已复制' : '复制 JSON'}
                   </button>
                 </div>
-                <pre className="text-[11px] font-mono-data text-[#C6C2B8] overflow-x-auto max-h-52 leading-relaxed">
+                <pre className="text-[11px] font-mono-data text-[#C6C2BA] overflow-x-auto max-h-48 leading-relaxed">
                   {cleanJson}
                 </pre>
               </div>
@@ -215,27 +171,27 @@ export const CardDetailModal: React.FC<CardDetailModalProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    onMountToWorkbench(card);
+                    onEquipToCombine(card);
                     onClose();
                   }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D8B467] text-[#111318] text-sm font-semibold hover:bg-[#E9CF90] transition-colors whitespace-nowrap"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#E2BD75] text-[#0D0E14] text-sm font-semibold hover:bg-[#F3D99F] transition-colors whitespace-nowrap"
                 >
                   <Layers className="w-4 h-4" />
-                  装配至叙事工作台
+                  装入自由组合槽位
                 </button>
               ) : (
-                <div className="text-xs text-[#D8B467]">
-                  尚未收藏此卡 · 前往「卡包货架」开启「{card.series}」卡包获取
-                </div>
+                <span className="text-xs text-[#E2BD75]">
+                  暂未持有此素材 · 前往「主题卡包」抽取「{card.theme_name}」主题包即可解锁
+                </span>
               )}
 
               <button
                 type="button"
                 onClick={() => setShowJson((v) => !v)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1B202C] border border-white/10 text-sm text-[#ECE9E1] hover:border-white/25 transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1A1D29] border border-white/10 text-sm text-[#F1EEE8] hover:border-white/25 transition-colors whitespace-nowrap"
               >
                 <Code2 className="w-4 h-4" />
-                {showJson ? '收起 JSON 数据' : '查看底层 JSON'}
+                {showJson ? '收起 JSON' : '查看 JSON'}
               </button>
             </div>
           </div>
